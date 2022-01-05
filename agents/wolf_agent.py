@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 
 import numpy as np
 
@@ -12,13 +13,13 @@ class WoLFAgent():
         self.alpha = alpha
         self.nb_states=nb_states
         self.gamma = gamma
-        self.actions = actions  
+        self.actions = actions
         self.last_action_id = None
         self.q_values = self._init_q_values()
         self.pi = [[(1.0/len(actions)) for idx in range(len(actions))] for _ in range(self.nb_states)]
         self.pi_average = [[(1.0/len(actions)) for idx in range(len(actions))] for _ in range(self.nb_states)]
         self.high_delta = high_delta
-        self.row_delta = low_delta 
+        self.row_delta = low_delta
 
         self.reward_history = []
         self.conter = 0
@@ -50,20 +51,43 @@ class WoLFAgent():
            if self.pi_average[s][aidx] < 0: self.pi_average[s][aidx] = 0
 
     def _update_pi(self, s):
-       delta = self.decide_delta(s)
-       max_action_id = np.argmax(self.q_values[s])
-       for aidx, _ in enumerate(self.pi[s]):
-           if aidx == max_action_id:
-               update_amount = delta
-           else:
-               update_amount = ((-delta)/(len(self.actions)-1))
-           self.pi[s][aidx] = self.pi[s][aidx] + update_amount
-           if self.pi[s][aidx] > 1: self.pi[s][aidx] = 1
-           if self.pi[s][aidx] < 0: self.pi[s][aidx] = 0
+        delta = self.decide_delta(s)
+        max_action_id = np.argmax(self.q_values[s])
+        if sum(self.pi[s]) > 1.001:
+            x=2
+
+        for aidx, _ in enumerate(self.pi[s]):
+            if aidx == max_action_id:
+                update_amount = delta
+            else:
+                update_amount = ((-delta)/(len(self.actions)-1))
+            self.pi[s][aidx] = self.pi[s][aidx] + update_amount
+
+        picopy = deepcopy(self.pi[s])
+        for aidx, _ in enumerate(self.pi[s]):
+            if aidx == max_action_id:
+                if picopy[aidx] > 1:
+                    offset = picopy[aidx]-1
+                    for i, _ in enumerate(self.pi[s]):
+                        if i != aidx:
+                            self.pi[s][i] -= offset/(len(self.actions)-1)
+            else:
+                if picopy[aidx] < 0:
+                    offset = picopy[aidx]
+                    for i, _ in enumerate(self.pi[s]):
+                        if i != aidx:
+                            self.pi[s][i] += offset/(len(self.actions)-1)
+        for aidx, _ in enumerate(self.pi[s]):
+            if aidx == max_action_id:
+                self.pi[s][aidx] = min(1.0, self.pi[s][aidx])
+            else:
+                self.pi[s][aidx] = max(0.0, self.pi[s][aidx])
+
+
 
     def decide_delta(self, s):
         """
-            comfirm win or lose 
+            comfirm win or lose
         """
         expected_value = 0
         expected_value_average = 0
