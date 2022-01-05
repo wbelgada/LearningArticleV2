@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 
 from agents.phc_agent import PHCAgent
 from agents.wolf_agent import WoLFAgent
-from matrix_game import MatrixGame
+from environments.matrix_game import MatrixGame
 
 if __name__ == '__main__':
     nb_episode = 1000000
-    evaluate_every = 25000
+    evaluate_every = 10000
     nb_runs = 1
 
     actions = np.arange(3)
@@ -22,32 +22,34 @@ if __name__ == '__main__':
     game = MatrixGame("RPS")
     for i in range(nb_runs):
         printu=False
-        agent1 = WoLFAgent(alpha=0.1, actions=actions, high_delta=0.0004, low_delta=0.0002)
-        agent2 = PHCAgent(delta=0.0004, initialStrategy=(1 / len(actions) for i in range(len(actions))))
+        agent1 = WoLFAgent(alpha=0.1, actions=actions, nb_states=1, high_delta=0.0004, low_delta=0.0002)
+        #agent2 = WoLFAgent(alpha=0.1, actions=actions, nb_states=1, high_delta=0.0004, low_delta=0.0002)
+
+        agent2 = PHCAgent(delta=0.0004, nb_actions=3, initialStrategy=(1 / len(actions) for i in range(len(actions))))
         for episode in range(nb_episode):
             """if episode >= 670000 and not printu:
                 printu = True"""
             if episode%10000 == 0:
                 print(episode)
-            action1 = agent1.act(printu=printu)
-            agent2.act()
+            action1 = agent1.act(0)
+            agent2.act(0)
             action2 = agent2.currentAction
 
             _, r1, r2 = game.step(action1, action2)
 
-            agent1.observe(reward=r1)
+            agent1.observe(reward=r1, obs=0, nextobs=0)
             agent2.setReward(r2)
-            agent2.updateActionValues()
-            agent2.updateStrategy()
+            agent2.updateActionValues(0,0)
+            agent2.updateStrategy(0)
             agent2.updateTimeStep()
             agent2.updateEpsilon()
             agent2.updateAlpha()
             if episode % evaluate_every == 0:
                 index = int(episode/evaluate_every)
-                total_pi_historyRock[index] += agent1.pi[0]
-                total_pi_historyRock2[index] += agent2.strategy[0]
-                total_pi_historyPaper[index] += agent1.pi[1]
-                total_pi_historyPaper2[index] += agent2.strategy[1]
+                total_pi_historyRock[index] += agent1.pi[0][0]
+                total_pi_historyRock2[index] += agent2.strategy[0][0]
+                total_pi_historyPaper[index] += agent1.pi[0][1]
+                total_pi_historyPaper2[index] += agent2.strategy[0][1]
 
     total_pi_historyRock /= nb_runs
     total_pi_historyRock2 /= nb_runs
