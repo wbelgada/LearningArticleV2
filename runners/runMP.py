@@ -20,10 +20,10 @@ if __name__ == '__main__':
         agent1 = WoLFAgent(alpha=0.1, actions=actions,nb_states=1, high_delta=0.0004, low_delta=0.0002)
         #agent2 = WoLFAgent(alpha=0.1, actions=actions,nb_states=1, high_delta=0.0004, low_delta=0.0002)
         #agent1 = PHCAgent(delta = 0.0004,initialStrategy=(1/len(actions) for i in range(len(actions))))
-        agent2 = PHCAgent(delta = 0.0004,initialStrategy=(1/len(actions) for i in range(len(actions))))
+        #agent2 = PHCAgent(delta = 0.0004,initialStrategy=(1/len(actions) for i in range(len(actions))))
 
         #agent1 = PHCAgent(delta = 0.0004,initialStrategy=(1.0, 0.0))
-        #agent2 = PHCAgent(delta = 0.0004,initialStrategy=(1.0, 0.0))
+        agent2 = PHCAgent(delta = 0.0004,initialStrategy=(1.0, 0.0))
 
         for episode in range(nb_episode):
             action1 = agent1.act(0)

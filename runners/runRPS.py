@@ -55,10 +55,14 @@ if __name__ == '__main__':
     total_pi_historyRock2 /= nb_runs
     total_pi_historyPaper /= nb_runs
     total_pi_historyPaper2 /= nb_runs
+
+    print(total_pi_historyPaper[len(total_pi_historyPaper2)-20:len(total_pi_historyPaper)])
+    print(total_pi_historyRock[len(total_pi_historyPaper2)-20:len(total_pi_historyPaper)])
+
     #print(agent1.pi)
     #print(agent2.pi)
-    #plt.plot(total_pi_historyRock, total_pi_historyPaper, label="agent1's pi(0)")
-    plt.plot(total_pi_historyRock2, total_pi_historyPaper2, label="agent1's pi(0)")
+    plt.plot(total_pi_historyRock, total_pi_historyPaper, label="agent1's pi(0)")
+    #plt.plot(total_pi_historyRock2, total_pi_historyPaper2, label="agent1's pi(0)")
 
     #plt.ylim(0, 1)
     #plt.xlim(0, 1)

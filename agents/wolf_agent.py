@@ -56,14 +56,37 @@ class WoLFAgent():
         if sum(self.pi[s]) > 1.001:
             x=2
 
-        for aidx, _ in enumerate(self.pi[s]):
+        if self.pi[s][max_action_id] + delta > 1:
+            self.pi[s][max_action_id] = 1
+            for i in range(len(self.pi[s])):
+                if i != max_action_id:
+                    self.pi[s][i] = 0
+        else:
+
+            self.pi[s][max_action_id] = self.pi[s][max_action_id] + delta
+            t = [self.pi[s][i] for i in range(len(self.pi[s])) if i != max_action_id]
+            sumt = sum(t)
+            norm = [t[i] / sumt for i in range(len(t))]
+            notx = sumt
+            notx = notx - delta
+            newProba = [(t[i] * notx)/sumt for i in range(len(norm))]
+            j = 0
+            for i in range(len(self.pi[s])):
+                if i != max_action_id:
+                    self.pi[s][i] = newProba[j]
+                    j = j + 1
+
+
+
+
+        """for aidx, _ in enumerate(self.pi[s]):
             if aidx == max_action_id:
                 update_amount = delta
             else:
                 update_amount = ((-delta)/(len(self.actions)-1))
-            self.pi[s][aidx] = self.pi[s][aidx] + update_amount
+            self.pi[s][aidx] = self.pi[s][aidx] + update_amount"""
 
-        picopy = deepcopy(self.pi[s])
+        '''picopy = deepcopy(self.pi[s])
         for aidx, _ in enumerate(self.pi[s]):
             if aidx == max_action_id:
                 if picopy[aidx] > 1:
@@ -81,7 +104,7 @@ class WoLFAgent():
             if aidx == max_action_id:
                 self.pi[s][aidx] = min(1.0, self.pi[s][aidx])
             else:
-                self.pi[s][aidx] = max(0.0, self.pi[s][aidx])
+                self.pi[s][aidx] = max(0.0, self.pi[s][aidx])'''
 
 
 
