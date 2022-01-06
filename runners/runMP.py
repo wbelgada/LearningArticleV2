@@ -4,6 +4,7 @@ from time import time
 
 from agents.phc_agent import PHCAgent
 from agents.wolf_agent import WoLFAgent
+from agents.Q_learner_agent import QLearnerAgent
 from environments.matrix_game import MatrixGame
 
 if __name__ == '__main__':
